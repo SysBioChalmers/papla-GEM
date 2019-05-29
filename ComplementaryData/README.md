@@ -1,0 +1,1 @@
+This folder contains data files that are used for model reconstruction or analysis.
