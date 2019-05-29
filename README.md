@@ -1,10 +1,10 @@
-# rhto-GEM: Genome-scale metabolic model of _Papiliotrema laurentii_
+# papla-GEM: Genome-scale metabolic model of _Papiliotrema laurentii_
 
-[![DOI](https://zenodo.org/badge/xxx.svg)](https://zenodo.org/badge/latestdoi/xxx) [![GitHub version](https://badge.fury.io/gh/sysbiochalmers%2Fpapiliotrema-laurentii-gem.svg)](https://badge.fury.io/gh/sysbiochalmers%2Fpapiliotrema-laurentii-gem) 
+[![DOI](https://zenodo.org/badge/xxx.svg)](https://zenodo.org/badge/latestdoi/xxx) [![GitHub version](https://badge.fury.io/gh/sysbiochalmers%2Fpapla-gem.svg)](https://badge.fury.io/gh/sysbiochalmers%2Fpapla-gem) 
 
 - Brief model description
 
-This repository contains the current genome-scale metabolic model of _Papiliotrema laurentii UFV-1_, named **papiliotrema-laurentii-GEM**. For the latest updated release see [here](https://github.com/SysBioChalmers/papiliotrema-laurentii-gem/releases).
+This repository contains the current genome-scale metabolic model of _Papiliotrema laurentii UFV-1_, named **papla-gem**. For the latest updated release see [here](https://github.com/SysBioChalmers/papla-gem/releases).
 
 - Abstract
 
@@ -24,14 +24,14 @@ _Papiliotrema laurentii UFV-1_.
 | ------------- |:-------------:|:-------------:|:-------------:|:-----:|
 | _Papiliotrema laurentii_|	[rhto-GEM](https://github.com/SysBioChalmers/rhto-GEM) | xx | xx | xx |
 
-A [Memote](https://memote.readthedocs.io/en/latest/) snapshot report of the most recent release is available [here](https://SysBioChalmers.github.io/papiliotrema-laurentii-gem).
+A [Memote](https://memote.readthedocs.io/en/latest/) snapshot report of the most recent release is available [here](https://SysBioChalmers.github.io/papla-gem).
 
 This repository is maintained through a collaboration between Wendel Batista da Silveira (affiliation) and Eduard Kerkhoven ([@edkerk](https://github.com/edkerk/)), Division of Systems and Synthetic Biology, Department of Biology and Biological Engineering, Chalmers University of Technology.
 
 ## Citation
 
-* If you use papiliotrema-laurentii-GEM in your research, whether for simulations, data analysis, model reconstruction of other purposes, we ask you to cite the papiliotrema-laurentii-GEM paper on [bioRxiv](https://doi.org/10.1101/xxx).
-* In addition, it is good practice to cite the specific version of papiliotrema-laurentii-GEM that you used, to improve reproducibility. All papiliotrema-laurentii-GEM releases are archived in [Zenodo](https://zenodo.org/badge/latestdoi/xx). Find the corresponding DOI for each release [here](https://zenodo.org/search?page=1&size=20&q=conceptrecid:xx&sort=-publication_date&all_versions=True).
+* If you use papla-gem in your research, whether for simulations, data analysis, model reconstruction of other purposes, we ask you to cite the papla-gem paper on [bioRxiv](https://doi.org/10.1101/xxx).
+* In addition, it is good practice to cite the specific version of papla-gem that you used, to improve reproducibility. All papla-gem releases are archived in [Zenodo](https://zenodo.org/badge/latestdoi/xx). Find the corresponding DOI for each release [here](https://zenodo.org/search?page=1&size=20&q=conceptrecid:xx&sort=-publication_date&all_versions=True).
 
 ## Installation
 
@@ -45,8 +45,8 @@ This repository is maintained through a collaboration between Wendel Batista da 
 * For contribution to development: a [git wrapper](https://github.com/manur/MATLAB-git) added to the search path.
 
 ### Installation instructions
-* Just want to use the model? Clone it from [`master`](https://github.com/SysBioChalmers/papiliotrema-laurentii-GEM) in the Github repo, or just download [the latest release](https://github.com/SysBioChalmers/papiliotrema-laurentii-GEM/releases).
-* Wish to also contribute? Fork it to your Github account, and create a new branch from [`devel`](https://github.com/SysBioChalmers/papiliotrema-laurentii-GEM/tree/devel).
+* Just want to use the model? Clone it from [`master`](https://github.com/SysBioChalmers/papla-gem) in the Github repo, or just download [the latest release](https://github.com/SysBioChalmers/papla-gem/releases).
+* Wish to also contribute? Fork it to your Github account, and create a new branch from [`devel`](https://github.com/SysBioChalmers/papla-gem/tree/devel).
 
 ## Model files
 
