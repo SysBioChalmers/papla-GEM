@@ -1,0 +1,26 @@
+glucose	xylose	rxns	rxnName	eqn
+0	0	r_0109	acetyl-CoA carboxylase, reaction	acetyl-CoA[c] + ATP[c] + bicarbonate[c] => ADP[c] + H+[c] + malonyl-CoA[c] + phosphate[c]
+0	0	r_0486	glyceraldehyde-3-phosphate dehydrogenase	glyceraldehyde 3-phosphate[c] + NAD[c] + phosphate[c] <=> 1,3-bisphospho-D-glycerate[c] + H+[c] + NADH[c]
+9.773447e+01	1.409785e+01	r_1050	transketolase 2	D-erythrose 4-phosphate[c] + D-xylulose 5-phosphate[c] <=> D-fructose 6-phosphate[c] + glyceraldehyde 3-phosphate[c]
+5.669028e+01	6.997238e+01	r_1054	triose-phosphate isomerase	dihydroxyacetone phosphate[c] <=> glyceraldehyde 3-phosphate[c]
+0	0	r_2141	fatty-acyl-CoA synthase (n-C18:0CoA)	acetyl-CoA[c] + 24 H+[c] + 8 malonyl-CoA[c] + 16 NADPH[c] => 8 carbon dioxide[c] + 8 coenzyme A[c] + 8 H2O[c] + 16 NADP(+)[c] + stearoyl-CoA[c]
+4.955336e+01	4.574046e+01	r_1672	carbon dioxide exchange	carbon dioxide[e] => 
+0	0	r_1992	oxygen exchange	oxygen[e] <=> 
+0	100	r_1714	D-glucose exchange	D-glucose[e] => 
+100	0	r_1718	D-xylose exchange	D-xylose[e] => 
+6.599764e+01	6.109528e+01	r_0226	ATP synthase	ADP[m] + 3 H+[c] + phosphate[m] => ATP[m] + 2 H+[m] + H2O[m]
+2.947895e+01	1.398252e+01	r_0439	ubiquinol:ferricytochrome c reductase	1.266 H+[m] + ubiquinol-6[m] + 2 ferricytochrome c[m] => 2.532 H+[c] + ubiquinone-6[m] + 2 ferrocytochrome c[m]
+4.955336e+01	4.574046e+01	r_1697	CO2 transport	carbon dioxide[c] <=> carbon dioxide[e]
+2.947895e+01	1.398252e+01	r_1978	O2 transport	oxygen[c] <=> oxygen[m]
+0	0	r_1979	O2 transport	oxygen[e] <=> oxygen[c]
+3.939624e+01	1.899715e+01	r_2096	water diffusion	H2O[c] <=> H2O[m]
+0	0	r_3519	stearoyl-CoA transport, cytoplasm-ER membrane	stearoyl-CoA[c] <=> stearoyl-CoA[erm]
+0	0	r_3531	O2 transport, cytoplasm-ER membrane	oxygen[c] <=> oxygen[erm]
+0	0	r_3532	NADH transport, cytoplasm-ER membrane	NADH[c] <=> NADH[erm]
+0	0	r_3533	NAD transport, cytoplasm-ER membrane	NAD[c] <=> NAD[erm]
+2.947895e+01	1.398252e+01	r_0438	ferrocytochrome-c:oxygen oxidoreductase	1.266 H+[m] + 0.25 oxygen[m] + ferrocytochrome c[m] => 0.633 H+[c] + 0.5 H2O[m] + ferricytochrome c[m]
+0	0	r_0892	phosphoglycerate kinase	1,3-bisphospho-D-glycerate[c] + ADP[c] <=> 3-phosphonato-D-glycerate(3-)[c] + ATP[c]
+5.392490e+01	4.991932e+01	r_1110	ADP/ATP transporter	ADP[c] + ATP[m] <=> ADP[m] + ATP[c]
+0	0	r_1667	bicarbonate formation	carbon dioxide[c] + H2O[c] <=> bicarbonate[c] + H+[c]
+0	0	r_2183	stearoyl-CoA desaturase (n-C18:0CoA -> n-C18:1CoA), ER membrane	H+[erm] + stearoyl-CoA[erm] + oxygen[erm] + NADH[erm] => 2 H2O[erm] + oleoyl-CoA[erm] + NAD[erm]
+0	0	exch_TAG		triglyceride (1-16:0, 2-18:1, 3-18:1)[erm] + triglyceride (1-16:0, 2-18:1, 3-18:1)[lp] => 
