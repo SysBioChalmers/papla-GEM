@@ -18,7 +18,7 @@ if ~strcmp(currentBranch,'master')
 end
 
 %Bump version number:
-oldModel   = load('../ModelFiles/mat/papla-GEM.mat');
+oldModel   = load('../model/papla-GEM.mat');
 oldVersion = oldModel.model.description;
 oldVersion = oldVersion(strfind(oldVersion,'_v')+2:end);
 oldVersion = str2double(strsplit(oldVersion,'.'));
@@ -47,13 +47,13 @@ if ~contains(history,['papla-GEMv' newVersion ':'])
 end
 
 %Load model:
-model = importModel('../ModelFiles/xml/papla-GEM.xml');
+model = importModel('../model/papla-GEM.xml');
 
 %Include tag and save model:
 model.description = ['Hansenula polymorpha-GEM_v' newVersion];
 
 %Save model
-exportForGit(model,'papla-GEM','..',{'mat', 'txt', 'xlsx', 'xml', 'yml'});
+exportForGit(model,'papla-GEM','../model',{'mat', 'txt', 'xlsx', 'xml', 'yml'});
 
 %Update version file:
 fid = fopen('../version.txt','wt');
