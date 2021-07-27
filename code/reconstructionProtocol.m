@@ -45,6 +45,7 @@ save([root '/scrap/blastStruct.mat'],'blast*');
 % 
 % Use the blast results to generate the first draft model.
 model=getModelFromHomology(modelRhto,blastRhto,'papla',{},1,false,10^-20,150,35);
+model=deleteUnusedGenes(model);
 % 
 save([root '/scrap/model_r1.mat'],'model');
 %load([root 'scrap/model_r1.mat'])
@@ -429,7 +430,7 @@ model = setParam(model,'lb', aminoacidRxns, 0);
 model.annotation.defaultLB    = -1000; % Default lower bound
 model.annotation.defaultUB    = +1000; % Default upper bound
 model.annotation.taxonomy     = 'taxonomy/460523';
-model.annotation.givenName    = 'Rafaela'; 'Maurício';
+model.annotation.givenName    = 'Rafaela'; 'Mauricio';
 model.annotation.familyName   = 'Ventorim'; 'Ferreira';
 model.annotation.email        = 'rafaela.ventorim@ufv.br'; 'mauricio.moura@ufv.br';
 model.annotation.organization = 'Universidade Federal de Vicosa';
