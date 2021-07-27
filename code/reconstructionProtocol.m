@@ -391,6 +391,12 @@ disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.rxns)) ' / ' ...
     num2str(length(model.mets))])
 %  
+
+%% Set NGAM and fit GAEC
+% Due to limited bioreactor data, unable to reliably fit NGAM. Instead, use the
+% NGAM that was fitted in rhto-GEM to >17 datapoints = 3.3928
+model = setParam(model,'lb','r_4046',3.3928);
+
 % nutrient uptake reactions to simulate complex medium conditions
 aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1873'; ... % L-alanine
@@ -413,6 +419,12 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
 model = setParam(model, 'lb', aminoacidRxns, -0.1);
+
+% Fit GAEC based on bioreactor cultivation data gathered in this study
+cd([root 'code/curation'])
+[model, GAEC] = fitGAEC(model);
+model = setParam(model,'lb', aminoacidRxns, 0);
+
 %% Add model information.
 model.annotation.defaultLB    = -1000; % Default lower bound
 model.annotation.defaultUB    = +1000; % Default upper bound

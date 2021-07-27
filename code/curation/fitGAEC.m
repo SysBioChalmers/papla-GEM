@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% GAM = fitGAM(model)
+% GAEC = fitGAEC(model)
 %
 %   Modified from GECKO, under MIT License:
 %   https://github.com/SysBioChalmers/SLIMEr/blob/master/models/scaleAbundancesInModel.m
@@ -7,61 +7,60 @@
 % 2021-07-25    Eduard Kerkhoven
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [model,GAM,error] = fitGAM(model)
+function [model,GAEC,err] = fitGAEC(model)
 
 %Load chemostat data:
 fid         = fopen('../../data/biomass/bioreactor_growth.csv');
 fluxData    = textscan(fid,'%f32 %f32 %s','Delimiter',',','HeaderLines',1);
 fluxData    = [fluxData{1} fluxData{2}];
 fclose(fid);
+fluxData(5,:) = [];
 
-
-%GAMs to span:
-disp('Estimating GAM:')
-GAM = 70:15:300;
+%GAECs to span:
+disp('Estimating GAEC:')
+GAEC = 1:10:301;
 
 %1st iteration:
-GAM = iteration(model,GAM,fluxData);
+GAEC = iteration(model,GAEC,fluxData);
 
 %2nd iteration:
-GAM = iteration(model,GAM-10:1:GAM+10,fluxData);
+GAEC = iteration(model,GAEC-10:1:GAEC+10,fluxData);
 
 %3rd iteration:
-[GAM, error] = iteration(model,GAM-1:0.1:GAM+1,fluxData);
+[GAEC, err] = iteration(model,GAEC-1:0.1:GAEC+1,fluxData);
 
-model = setGAM(model,GAM);
+model = setGAEC(model,GAEC);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [GAM,error] = iteration(model,GAM,fluxData)
+function [GAEC,err] = iteration(model,GAEC,fluxData)
 
-fitting = ones(size(GAM))*1000;
+fitting = ones(size(GAEC))*1000;
 
-for i = 1:length(GAM)
+for i = 1:length(GAEC)
     %Simulate model and calculate fitting:
-    mod_data   = abs(simulateChemostat(model,fluxData,GAM(i)));
+    mod_data   = abs(simulateChemostat(model,fluxData,GAEC(i)));
     R          = (mod_data - fluxData)./fluxData;
     fitting(i) = sqrt(sum(sum(R.^2)));
-    disp(['GAM = ' num2str(GAM(i)) ' -> Error = ' num2str(fitting(i))])
+    disp(['GAEC = ' num2str(GAEC(i)) ' -> Error = ' num2str(fitting(i))])
 end
 
 %Choose best:
 [~,best] = min(fitting);
 
-if best == 1 || best == length(GAM)
-    error('GAM found is sub-optimal: please expand GAM search bounds.')
+if best == 1 || best == length(GAEC)
+    error('GAEC found is sub-optimal: please expand GAEC search bounds.')
 else
-    GAM = GAM(best);
-    error = min(fitting);
+    GAEC = GAEC(best);
+    err = min(fitting);
 end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function mod_data = simulateChemostat(model,fluxData,GAM)
+function mod_data = simulateChemostat(model,fluxData,GAEC)
 
-model = setGAM(model,GAM);
+model = setGAEC(model,GAEC);
 
-%pos = getIndexes(model',{'r_4041','r_1714','r_1654'},'rxns');
 pos = getIndexes(model',{'r_2111','r_1714'},'rxns');
 
 %Simulate chemostats:
@@ -79,14 +78,14 @@ end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function model = setGAM(model,GAM)
+function model = setGAEC(model,GAEC)
 
 xr_pos = getIndexes(model','r_4041','rxns');
 for i = 1:length(model.mets)
     S_ix  = model.S(i,xr_pos);
-    isGAM = sum(strcmp({'ATP','ADP','H2O','H+','phosphate'},model.metNames{i})) == 1;
-    if S_ix ~= 0 && isGAM
-        model.S(i,xr_pos) = sign(S_ix) * GAM;
+    isGAEC = sum(strcmp({'ATP','ADP','H2O','H+','phosphate'},model.metNames{i})) == 1;
+    if S_ix ~= 0 && isGAEC
+        model.S(i,xr_pos) = sign(S_ix) * GAEC;
     end
 end
 end
