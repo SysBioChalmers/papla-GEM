@@ -1,4 +1,11 @@
 %% SIMULATIONS
+clear; clc;
+if ~exist([pwd() '/simulation.m']); error(['Make sure that '...
+        'your Current Folder is the one containing the simulation file.']); end
+cd ../;  root = [pwd() '/'];
+data = [root 'data/'];
+code = [root 'code/'];
+cd(code)
 % Load model
 model = importModel('../model/papla-GEM.xml');
 
@@ -32,7 +39,7 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1912'; ... % L-tryptophan
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
-modelTmp = setParam(model, 'lb', aminoacidRxns, -0.1);
+modelTmp = setParam(model, 'lb', aminoacidRxns, -0.2);
 
 disp('Growth on glucose:')
 for i=1:4
@@ -48,16 +55,15 @@ fprintf('Growth rate measured: %.4f / simulated: %.4f\n',fluxData(5,1),-sol.f)
 %% Simulate different carbon sources
 % set the carbon source and unlimited O2 for aerobic growth
 cSource = {'glucose','acetate','galactose','sucrose','xylose',...
-    'galacturonate','glyerol','L-arabinose','D-arabinose','mannose',...
+    'glyerol','L-arabinose','D-arabinose','mannose',...
     '(R)-lactate','(S)-lactate'};
-exchRxn = {'r_1714','r_1634','r_1710','r_2058','r_1718','r_1711',...
+exchRxn = {'r_1714','r_1634','r_1710','r_2058','r_1718',...
     'r_1808','r_1878','r_1706','r_1715','r_1546','r_1551'};
 zeroFlx = repmat(0,1,numel(cSource));
-
 model = setParam(model, 'lb', {'r_1992'}, -1000);    % O2
 model = setParam(model, 'ub', {'r_1992'}, 0);
 % set biomass pseudoreaction as objective
-model = setParam(model, 'obj',{'r_2111'}, 1);   
+model = setParam(model, 'obj',{'r_2111'}, 1);
 
 % Loop through all carbon sources and print exchange fluxes
 for i = 1:numel(cSource)
@@ -110,27 +116,24 @@ fclose(fid);
 %
 %% This script predicts metabolic engineering targets for increased
 % production of triglycerides.
-% Add exchange reactions for linolenate and triglyceride. For the
-% triglyceride, we specifically choose 16:0/18:1/18:1-TAG as target.
-idx = getIndexes(model, {'linolenate[c]','triglyceride (1-16:0, 2-18:1, 3-18:1)[erm]'}, 'metscomps');
+% Add exchange reactions for triglyceride (16:0/18:1/18:1-TAG as target).
+idx = getIndexes(model, {'triglyceride (1-16:0, 2-18:1, 3-18:1)[erm]'}, 'metscomps');
 %
 % Add exchange reactions for products
 model = addExchangeRxns(model, 'out', idx);
 % Keep track of ids of exchange reactions
-rxn1 = model.rxns(end-1);
-rxn2 = model.rxns(end);
+rxn = model.rxns(end);
 %
-% Perform FSEOF for linolenic acid and TAG on glucose
+% Perform FSEOF for TAG on glucose
 model       = setParam(model, 'eq', {'r_1714', 'r_1718'}, [-1, 0]);
 %
-targets{1} = FSEOF(model, 'r_2111', rxn1, 10, 0.9);
-targets{2} = FSEOF(model, 'r_2111', rxn2, 10, 0.9);
+targets{1} = FSEOF(model, 'r_2111', rxn, 10, 0.9);
 %
-% Perform FSEOF for linolenic acid and TAG on xylose
+% Perform FSEOF for TAG on xylose
 model       = setParam(model, 'eq', {'r_1714', 'r_1718'}, [0, -1]);
 %
-targets{3} = FSEOF(model, 'r_2111', rxn1, 10, 0.9);
-targets{4} = FSEOF(model, 'r_2111', rxn2, 10, 0.9);
+targets{2} = FSEOF(model, 'r_2111', rxn, 10, 0.9);
+
 %
 % Summarize results in table
 geneAssoc = ~cellfun('isempty',model.grRules);
@@ -146,10 +149,10 @@ target  = find(sum(target,2) & geneAssoc);
 [~,I]=sort(sum(slope(target,:),2,'omitnan'),'descend');
 out     = [num2cell(slope(target(I),:)), model.rxnNames(target(I)), model.grRules(target(I))];
 %
-fid = fopen([data '/results/fseof_TAG_linolenicAcid.tsv'],'w');
-fprintf(fid,'%s\t%s\t%s\t%s\t%s\t%s\n',["glu_LA" "glu_TAG" "xyl_LA" "xyl_TAG" ...
+fid = fopen([data '/results/fseof_TAG.tsv'],'w');
+fprintf(fid,'%s\t%s\t%s\t%s\n',["glu_TAG" "xyl_TAG" ...
     "rxnName" "grRule"]);
 for j=1:length(I)
-    fprintf(fid,'%d\t%d\t%d\t%d\t%s\t%s\n',out{j,:});
+    fprintf(fid,'%d\t%d\t%s\t%s\n',out{j,:});
 end
 fclose(fid);

@@ -1,11 +1,26 @@
-glu_LA	glu_TAG	xyl_LA	xyl_TAG	rxnName	grRule
-NaN	1.229839e+01	NaN	1.197514e+01	acetyl-CoA carboxylase, reaction	PAPLA_00589 and PAPLA_05972
-NaN	5.820169e+00	NaN	8.799605e+00	pyruvate kinase	PAPLA_05564
-NaN	1.075568e+01	NaN	NaN	bicarbonate formation	PAPLA_02552 or PAPLA_04423
-NaN	9.905863e-01	NaN	9.903005e-01	PA phosphatase (1-16:0, 2-18:1), endoplasmic reticulum membrane	PAPLA_05530
-NaN	9.900302e-01	NaN	9.897276e-01	1-acyl-sn-glycerol-3-phosphate acyltransferase (1-16:0, 2-18:1), endoplasmic reticulum membrane	PAPLA_01612 or PAPLA_02926 or PAPLA_04498
-NaN	9.890541e-01	NaN	9.887617e-01	diacylglycerol acyltransferase (1-16:0, 2-18:1, 3-18:1), endoplasmic reticulum membrane	PAPLA_05949
-NaN	9.989734e-01	NaN	9.687367e-01	fatty-acyl-CoA synthase (n-C18:0CoA)	(PAPLA_00121 and PAPLA_00120) or PAPLA_00121
-NaN	1.671952e+00	NaN	NaN	glycerol-3-phosphate dehydrogenase (NAD)	PAPLA_02776 or PAPLA_04610
-NaN	6.615347e-01	NaN	6.511493e-01	glycerol-3-phosphate acyltransferase (16:0), endoplasmic reticulum membrane	PAPLA_02784
-NaN	6.152287e-01	NaN	6.036064e-01	fatty-acyl-CoA synthase (n-C16:0CoA)	(PAPLA_00121 and PAPLA_00120) or PAPLA_00121
+glu_TAG	xyl_TAG	rxnName	grRule
+1.659419e+01	1.484100e+01	aldehyde dehydrogenase (acetaldehyde, NADP)	PAPLA_01760 or PAPLA_02435 or PAPLA_03515 or PAPLA_04152 or PAPLA_04722 or PAPLA_05667
+1.484100e+01	1.484100e+01	pyruvate decarboxylase	PAPLA_01152
+1.470752e+01	1.470752e+01	acetyl-CoA synthetase	PAPLA_05332
+1.312257e+01	1.312257e+01	acetyl-CoA carboxylase, reaction	PAPLA_00589 and PAPLA_05972
+1.163173e+01	1.163173e+01	adenylate kinase	PAPLA_01917 or PAPLA_02396 or PAPLA_02489
+1.068346e+01	1.068346e+01	inorganic diphosphatase	PAPLA_05169
+NaN	1.891157e+01	glycerol-3-phosphate dehydrogenase (NAD)	PAPLA_02776 or PAPLA_04610
+NaN	1.832940e+01	glycerol-3-phosphatase	PAPLA_03190
+NaN	1.829143e+01	dihydroxyacetone kinase	PAPLA_04441
+NaN	1.829143e+01	glycerol dehydrogenase (NADP-dependent)	PAPLA_01202 or PAPLA_01940 or PAPLA_02343 or PAPLA_03365 or PAPLA_03526 or PAPLA_03552 or PAPLA_04010 or PAPLA_04694 or PAPLA_04731 or PAPLA_04814 or PAPLA_06040
+NaN	1.157133e+01	bicarbonate formation	PAPLA_02552 or PAPLA_04423
+3.696987e+00	3.696987e+00	pyruvate kinase	PAPLA_05564
+3.182247e+00	3.182247e+00	phosphoglycerate mutase	PAPLA_02614
+2.436024e+00	2.436024e+00	glyceraldehyde-3-phosphate dehydrogenase	PAPLA_01396
+1.420458e+00	1.397502e+00	fructose-bisphosphate aldolase	PAPLA_03603
+1.420458e+00	1.397502e+00	phosphofructokinase	PAPLA_01164
+1.093554e+00	1.093554e+00	fatty-acyl-CoA synthase (n-C18:0CoA)	(PAPLA_00121 and PAPLA_00120) or PAPLA_00121
+8.003205e-01	8.003205e-01	triose-phosphate isomerase	PAPLA_00094
+6.515832e-01	6.515832e-01	glycerol-3-phosphate acyltransferase (16:0), endoplasmic reticulum membrane	PAPLA_02784
+6.248772e-01	6.248772e-01	fatty-acyl-CoA synthase (n-C16:0CoA)	(PAPLA_00121 and PAPLA_00120) or PAPLA_00121
+1.057850e+00	NaN	glucose-6-phosphate isomerase	PAPLA_03864
+NaN	2.803256e-01	transketolase 2	PAPLA_01204 or PAPLA_02392 or PAPLA_05246
+NaN	2.295558e-02	phosphofructokinase (s7p)	PAPLA_01164
+NaN	2.295558e-02	sedoheptulose 1,7-bisphosphate D-glyceraldehyde-3-phosphate-lyase	PAPLA_03603
+NaN	2.295558e-02	transketolase 1	PAPLA_01204 or PAPLA_02392 or PAPLA_05246
