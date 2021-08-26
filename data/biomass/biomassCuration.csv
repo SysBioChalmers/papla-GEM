@@ -60,6 +60,7 @@ fatty acid backbone,s_0694,backbone,-0.0513723
 cardiolipin,s_3738,backbone,-0.000407882
 1-monoglyceride backbone,m_0100,backbone,0
 diglyceride backbone,s_3733,backbone,-0.0211533
+phosphatidylglycerol backbone, s_3737, backbone, 0
 lipid backbone,s_3746,backbone,1
 C16:0 chain,s_3740,chain,-0.111923853
 C18:0 chain,s_3742,chain,-0.024647929

@@ -31,7 +31,7 @@ function model = addSLIMEreactions(template, model, sourceModel)
 dat.chain = {'16:0';      '16:1';         '18:0';     '18:1';   '18:2';      '18:3'};
 dat.name  = {'palmitate'; 'palmitoleate'; 'stearate'; 'oleate'; 'linoleate'; 'linolenate'};
 dat.MW    = [256.42;      254.4;          284.48;     282.46;   280.44;      278.43];
-dat.ID    = {'s_3740';    's_3741';       's_3742';   's_3743'; 'm_0128';    'm_0129'};
+dat.ID    = {'s_3740';    's_3741';       's_3742';   's_3743'; 'm_0102';    'm_0103'};
 
 dat.compId   = {'c','ce','e','er','erm','g','gm','lp','m','mm','n','p','v','vm'};
 dat.compName = {'cytoplasm','cell envelope','extracellular','endoplasmic reticulum',...

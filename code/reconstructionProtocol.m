@@ -170,7 +170,8 @@ fclose(fid);
 template.rxns   = loadedData{1};   template.eqns        = loadedData{2};
 template.comps  = loadedData{3};   template.grRules     = loadedData{4};
 template.chains = {};
-for k = 1:length(loadedData)-4; template.chains(:,k) = loadedData{k+4}; end
+for k = 1:numCols-3; template.chains(:,k) = loadedData{k+4}; end
+template.chains = regexprep(template.chains,':0(\d)', ':$1');
 
 % Remove reactions that match a lipid template reaction (ignoring acyl-chains)
 toRemove    = regexprep(template.rxns, 'CHAIN.*', '');
@@ -186,13 +187,17 @@ model = addLipidReactions(template, model, modelRhto);
 fid         = fopen([data '/reconstruction/lipidTransport.txt']);
 firstLine   = fgets(fid);
 numCols     = numel(strfind(firstLine,char(9))); % number of \t
-loadedData  = textscan(fid, [repmat('%q ', [1, numCols]) '%q'], 'delimiter', ...
-    '\t', 'HeaderLines', 1);
+loadedData  = textscan(fid, [repmat('%q ', [1, numCols]) '%q'], 'delimiter', '\t');
 fclose(fid);
+
 clear template
 template.rxns   = loadedData{1};   template.eqns        = loadedData{2};
 template.comps  = loadedData{3};   template.chains = {};
-for k = 1:numCols-3; template.chains(:,k) = loadedData{k+3}; end
+for k = 1:numCols-2; template.chains(:,k) = loadedData{k+3}; end
+template.chains = regexprep(template.chains,':0(\d)', ':$1');
+toRemove    = regexprep(template.rxns,'CHAIN.*','');
+toRemove    = find(startsWith(model.rxnNames,toRemove));
+model       = removeReactions(model,toRemove);
 
 model = addLipidReactions(template, model, modelRhto);
 
@@ -213,7 +218,7 @@ template.bbMW       = loadedData{3};    template.comps  = loadedData{4};
 template.chains = {};
 for k = 1:numCols-3; template.chains(:,k) = loadedData{k+4}; end
 template.chains = regexprep(template.chains,':0(\d)', ':$1');
-
+%
 model = addSLIMEreactions(template, model, modelRhto);
 cd(code)
 
@@ -414,7 +419,7 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1912'; ... % L-tryptophan
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
-model = setParam(model, 'lb', aminoacidRxns, -0.1);
+model = setParam(model, 'lb', aminoacidRxns, -0.2);
 
 % Fit GAEC based on bioreactor cultivation data gathered in this study
 cd([root 'code/curation'])
