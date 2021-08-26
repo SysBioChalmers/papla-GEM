@@ -74,8 +74,6 @@
             <species id="M_s_3740" name="C16:0 chain"/>
             <species id="M_s_3742" name="C18:0 chain"/>
             <species id="M_s_3743" name="C18:1 chain"/>
-			<species id="M_s_3746" name="lipid backbone"/>
-			<species id="M_s_3747" name="lipid chain"/>
         </listOfSpecies>
     </model>
 </sbml>

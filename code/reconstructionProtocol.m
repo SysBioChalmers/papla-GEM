@@ -231,6 +231,45 @@ exportModel(model,[root 'scrap/r3_paplaGEM.xml'])
 clear fid loadedData template k toRemove ans
 
 %% PERFORM GAP-FILLING
+% MENECO
+% Find targets: any substrate for the pseudoreactions, us the following
+% text to reconstruct menecoTargets.sbml.
+rxnIdx  = find(contains(model.rxnNames,'pseudoreaction'));
+targets = find(any(model.S(:,rxnIdx)<0,2));
+ [model.mets(targets), model.metNames(targets)]
+ targetSBML=strcat('<species id="M_',model.mets(targets),...
+     '" name="',model.metNames(targets),'"/>');
+
+% Identified by MENECO (see meneco.txt for output file).
+% A minimum of 13 reactions are required, with different combinations of 19
+% reactions. Not to favour one reaction over the other, as we don't
+% have any prove at the moment which one is more likely to be present, we
+% will add the union of reactions.
+fid         = fopen([data '/meneco/menecoRxns.txt']);
+menecoRxns  = textscan(fid,'%s'); fclose(fid);
+menecoRxns  = menecoRxns{1};
+
+% If these reactions are present, that means that their respective enzymes
+% are present. Any other reaction annotated to the same enzymes should also
+% be added.
+menecoRxns  = getAllRxnsFromGenes(modelRhto,menecoRxns);
+model       = addRxnsGenesMets(model,modelRhto,menecoRxns,true,'Identified by MENECO to produce biomass components',1);
+
+model   = setParam(model,'obj','r_2111',1);
+sol     = solveLP(model,1)
+printFluxes(model, sol.x)
+
+% Back lower bound of biomass production to zero.
+model = setParam(model, 'lb', 'r_2111', 0);
+model = deleteUnusedGenes(model);
+
+disp(['Number of genes / rxns / mets in model:  ' ...
+    num2str(length(model.genes)) ' / ' ...
+    num2str(length(model.rxns)) ' / ' ...
+    num2str(length(model.mets))])
+
+% Export to Excel format for easy inspection
+exportToExcelFormat(model,[root '/scrap/r4_paplaGEM.xlsx']);
 
 % RAVEN fillGaps
 % Use biomass production as obj func for gapfilling
@@ -265,54 +304,6 @@ printFluxes(model, sol.x)
 model = setParam(model, 'lb', 'r_2111', 0);
 model = deleteUnusedGenes(model);
 
-save([root '/scrap/gapfilling.mat'],'model');
-% load([root 'scrap/gapfilling.mat'])
-
-disp(['Number of genes / rxns / mets in model:  ' ...
-    num2str(length(model.genes)) ' / ' ...
-    num2str(length(model.rxns)) ' / ' ...
-    num2str(length(model.mets))])
-
-% Export to Excel format for easy inspection
-exportToExcelFormat(model,[root '/scrap/r4_paplaGEM.xlsx']);
-exportModel(model,[root 'scrap/r4_paplaGEM.xml'])
-clear addedRxns rxns sol biomassRxns
-
-% MENECO
-% Find targets: any substrate for the pseudoreactions, us the following
-% text to reconstruct menecoTargets.sbml.
-rxnIdx  = find(contains(model.rxnNames,'pseudoreaction'));
-targets = find(any(model.S(:,rxnIdx)<0,2));
- [model.mets(targets), model.metNames(targets)]
- targetSBML=strcat('<species id="M_',model.mets(targets),...
-     '" name="',model.metNames(targets),'"/>');
-
-% Identified by MENECO (see meneco.txt for output file).
-% A minimum of 13 reactions are required, with different combinations of 19
-% reactions. Not to favour one reaction over the other, as we don't
-% have any prove at the moment which one is more likely to be present, we
-% will add the union of reactions.
-fid         = fopen([data '/meneco/menecoRxns.txt']);
-menecoRxns  = textscan(fid,'%s'); fclose(fid);
-menecoRxns  = menecoRxns{1};
-
-% If these reactions are present, that means that their respective enzymes
-% are present. Any other reaction annotated to the same enzymes should also
-% be added.
-menecoRxns  = getAllRxnsFromGenes(modelRhto,menecoRxns);
-model       = addRxnsGenesMets(model,modelRhto,menecoRxns,true,'Identified by MENECO to produce biomass components',1);
-
-model   = setParam(model,'obj','r_2111',1);
-sol     = solveLP(model,1)
-printFluxes(model, sol.x)
-
-% Back lower bound of biomass production to zero.
-model = setParam(model, 'lb', 'r_2111', 0);
-model = deleteUnusedGenes(model);
-
-save([root '/scrap/gapfillingfinal.mat'],'model');
-% load([root 'scrap/gapfillingfinal.mat'])
-
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
     num2str(length(model.rxns)) ' / ' ...
@@ -321,6 +312,10 @@ disp(['Number of genes / rxns / mets in model:  ' ...
 % Export to Excel format for easy inspection
 exportToExcelFormat(model,[root '/scrap/r5_paplaGEM.xlsx']);
 exportModel(model,[root 'scrap/r5_paplaGEM.xml'])
+clear addedRxns rxns sol biomassRxns
+
+save([root '/scrap/gapfilling.mat'],'model');
+% load([root 'scrap/gapfilling.mat'])
 clear addedRxns rxns sol biomassRxns
 
 %% MANUAL CURATION
