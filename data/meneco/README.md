@@ -1,0 +1,1 @@
+Before running `meneco.sh`, copy rhto.xml from `../templateModels`.

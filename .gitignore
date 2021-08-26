@@ -22,3 +22,12 @@ scrap
 
 # memote / pip
 Pipfile*
+
+# MATLAB files
+*.asv
+
+# VS code
+.vscode
+
+# Temporary files and folders
+scrap/
