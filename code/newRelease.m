@@ -16,9 +16,9 @@ end
 
 %Bump version number:
 oldModel   = load('../model/papla-GEM.mat');
-oldVersion = oldModel.model.description;
+oldVersion = oldModel.model.name;
 oldVersion = oldVersion(strfind(oldVersion,'_v')+2:end);
-oldVersion = str2double(strsplit(oldVersion,'.'));
+oldVersion = str2double(strsplit(oldVersion,'_'));
 newVersion = oldVersion;
 switch bumpType
     case 'major'
@@ -47,7 +47,7 @@ end
 model = importModel('../model/papla-GEM.xml');
 
 %Include tag and save model:
-model.description = ['papla-GEM_v' newVersion];
+model.name = ['papla-GEM_v' strrep(newVersion,'.','_')];
 nGenes=num2str(numel(model.genes));
 nMets=num2str(numel(model.mets));
 nRxns=num2str(numel(model.rxns));
@@ -61,13 +61,13 @@ fprintf(fid,newVersion);
 fclose(fid);
 
 %Update model stats in README.md
-newStats = ['$1 ' datestr(now,'dd-mmm-yyyy') ' | ' newVersion ' | ' nRxns ' | ' nMets ' | ' nGenes ' |'];
+newStats = ['$1' datestr(now,'dd-mmm-yyyy') ' | ' newVersion ' | ' nRxns ' | ' nMets ' | ' nGenes ' |'];
 searchStats = '^(\| \_Papiliotrema laurentii_ UFV-1 \| )\d{2}-\D{3}-\d{4} \| \d+\.\d+\.\d+ \| \d+ \| \d+ \| \d+ \|';
 fOld = fopen('../README.md','rt');
 fNew = fopen('../README.new','w+');
 while ~feof(fOld)
-    str = fgets(fOld)
-    fwrite(fNew,regexprep(str,searchStats,newStats))
+    str = fgets(fOld);
+    fwrite(fNew,regexprep(str,searchStats,newStats));
 end
 fclose(fNew);
 fclose(fOld);
