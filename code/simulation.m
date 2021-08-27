@@ -91,7 +91,7 @@ fclose(fid);
 %%  OLEAGINOUS FBA
 %  Add exchange reactions for triglyceride (16:0/18:1/18:1-TAG).
 idx = getIndexes(model, {'triglyceride (1-16:0, 2-18:1, 3-18:1)[erm]', ...
-    'triglyceride (1-16:0, 2-18:1, 3-18:1)[lp]'}, 'metscomps');
+    'triglyceride (1-16:0, 2-18:1, 3-18:1)[lp]'}, 'metcomps');
 % Add exchange reactions for products
 rxnsToAdd.rxns          = 'exch_TAG';
 rxnsToAdd.mets          = model.mets(idx);
@@ -124,10 +124,10 @@ mkdir([root 'data/results'])
 fid = fopen([data 'results/oleaginous.tsv'],'w');
 fprintf(fid,'%s\t%s\t%s\t%s\t%s\n',["glucose" "xylose" "rxns" "rxnName" "eqn"]);
 for j=1:length(idx)
-    fprintf(fid,'%d\t%d\t%s\t%s\t%s\n',out{j,:});
+    fprintf(fid,'%3.1f\t%3.1f\t%s\t%s\t%s\n',out{j,:});
 end
 fclose(fid);
-%
+
 %% This script predicts metabolic engineering targets for increased
 % production of triglycerides.
 % Add exchange reactions for triglyceride (16:0/18:1/18:1-TAG as target).
