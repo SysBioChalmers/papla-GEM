@@ -1,15 +1,12 @@
 function newRelease(bumpType)
 % newRelease
 %   Prepares a new release of the papla-GEM model, for direct submission to
-%   GitHub. This function should be run from the ComplementaryScripts
-%   directory.
+%   GitHub. This function should be run from the /code directory.
 %
 %   bumpType    string specifying the type of release, either 'major',
 %               'minor' or 'patch'
 %
 %   Usage: newRelease(bumpType)
-%
-% Adapted from Eduard Kerkhoven, 2018-05-15
 
 %Check if in master:
 currentBranch = git('rev-parse --abbrev-ref HEAD');
@@ -50,13 +47,29 @@ end
 model = importModel('../model/papla-GEM.xml');
 
 %Include tag and save model:
-model.description = ['Hansenula polymorpha-GEM_v' newVersion];
+model.description = ['papla-GEM_v' newVersion];
+nGenes=num2str(numel(model.genes));
+nMets=num2str(numel(model.mets));
+nRxns=num2str(numel(model.rxns));
 
 %Save model
-exportForGit(model,'papla-GEM','../model',{'mat', 'txt', 'xlsx', 'xml', 'yml'});
+exportForGit(model,'papla-GEM','../model',{'mat', 'txt', 'xlsx', 'xml', 'yml'},true,false);
 
 %Update version file:
 fid = fopen('../version.txt','wt');
 fprintf(fid,newVersion);
 fclose(fid);
+
+%Update model stats in README.md
+newStats = ['$1 ' datestr(now,'dd-mmm-yyyy') ' | ' newVersion ' | ' nRxns ' | ' nMets ' | ' nGenes ' |'];
+searchStats = '^(\| \_Papiliotrema laurentii_ UFV-1 \| )\d{2}-\D{3}-\d{4} \| \d+\.\d+\.\d+ \| \d+ \| \d+ \| \d+ \|';
+fOld = fopen('../README.md','rt');
+fNew = fopen('../README.new','w+');
+while ~feof(fOld)
+    str = fgets(fOld)
+    fwrite(fNew,regexprep(str,searchStats,newStats))
+end
+fclose(fNew);
+fclose(fOld);
+movefile '../README.new' '../README.md' f
 end
