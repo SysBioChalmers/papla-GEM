@@ -254,7 +254,7 @@ targets = find(any(model.S(:,rxnIdx)<0,2));
      '" name="',model.metNames(targets),'"/>');
 
 % Identified by MENECO (see meneco.txt for output file).
-% A minimum of 13 reactions are required, with different combinations of 19
+% A minimum of 34 reactions are required, with different combinations of 36
 % reactions. Not to favour one reaction over the other, as we don't
 % have any prove at the moment which one is more likely to be present, we
 % will add the union of reactions.
@@ -287,6 +287,8 @@ model = setParam(model, 'obj', 'r_2111', 1);
 % Set biomass production to arbitrary low flux, to force gap-filling to
 % produce biomass.
 model = setParam(model, 'lb', 'r_2111', 0.01);
+% Block 3',5'-AMP exchange, as it will otherwise be suggested by fillGaps
+model = setParam(model, 'ub', 'r_1641', 0);
 
 % From the Rhto model, remove all exchange reactions (the
 % necessary ones we already added, don't want to add new ones)
@@ -309,9 +311,9 @@ cd(code)
 sol = solveLP(model, 1)
 printFluxes(model, sol.x)
 
-% Back lower bound of biomass production to zero.
+% Reset lower bound of biomass production and allow 3',5'-AMP exchange
 model = setParam(model, 'lb', 'r_2111', 0);
-model = deleteUnusedGenes(model);
+model = setParam(model, 'ub', 'r_1641', 1000);
 
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
@@ -319,13 +321,12 @@ disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.mets))])
 
 % Export to Excel format for easy inspection
-exportToExcelFormat(model,[root '/scrap/r5_paplaGEM.xlsx']);
+%exportToExcelFormat(model,[root '/scrap/r5_paplaGEM.xlsx']);
 exportModel(model,[root 'scrap/r5_paplaGEM.xml'])
-clear addedRxns rxns sol biomassRxns
 
 save([root '/scrap/gapfilling.mat'],'model');
 % load([root 'scrap/gapfilling.mat'])
-clear addedRxns rxns sol biomassRxns
+clear addedRxns ans biomassRxns fid menecoRxns modelRhto2 rxnIdx sol targets targetSBML
 
 %% MANUAL CURATION
 % Include some missing essential reactions, e.g. xylulokinase, complex IV and reactions
@@ -423,7 +424,7 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1912'; ... % L-tryptophan
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
-model = setParam(model, 'lb', aminoacidRxns, -0.2);
+model = setParam(model, 'lb', aminoacidRxns, -0.1);
 
 % Fit GAEC based on bioreactor cultivation data gathered in this study
 cd([root 'code/curation'])
@@ -442,6 +443,9 @@ model.annotation.note         = 'Genome-scale model of Papiliotrema laurentii UF
 model.id                      = 'paplaGEM';
 model.description             = 'Papiliotrema laurentii-GEM';
 model.sourceUrl               = 'https://github.com/SysBioChalmers/papla-GEM';
+
+% Remove unnecessary fields
+model = rmfield(model,{'metFrom','rxnFrom','geneFrom','geneShortNames'});
 
 % Save workspace
 save([root 'scrap/finalmodel.mat'],'model')
