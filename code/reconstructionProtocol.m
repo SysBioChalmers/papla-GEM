@@ -20,6 +20,11 @@ cd(code)
 modelRhto = importModel([data 'templateModels/rhto.xml'], true);
 modelRhto.id = 'rhto';
 
+% Correct duplicate metabolite name in rhto-GEM v1.3.0.
+metIdx=getIndexes(modelRhto,'N-[(R)-4-phosphonopantothenoyl]-L-cysteine','metnames')
+modelRhto.metNames(metIdx(1))={'tmp'};
+modelRhto=replaceMets(modelRhto,'tmp',modelRhto.metNames(metIdx(2)),true);
+
 % Create the 'scrap' folder, in which all files created during the reconstruction,
 % which are not the final model, will be stored.
 % Create the excel file of template for easy inspection during reconstruction steps.
