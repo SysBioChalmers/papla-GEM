@@ -54,8 +54,11 @@ for i = 1:length(growth)
 end
 out=transpose(out);
 
-% Calculate Pearson R
+% Calculate Pearson R, not useful, as deviation from x=y is more relevant.
 R = corr(growth,out);
+% Calculate RMSE instead
+RMSE = sqrt(mean((growth-out).^2)); 
+RMSEglc = sqrt(mean((growth(1:end-1)-out(1:end-1)).^2)); 
 
 % Color according to carbon source
 [~,~,ic] = unique(source);
@@ -72,7 +75,8 @@ title('Model-predicted growth rate')
 xlabel('Measured growth, h^-^1')
 ylabel('Predicted growth, h^-^1')
 legend(unique(source),'Location','eastoutside')%,'NumColumns',2)
-text(0.05,0.45,['Pearson r: ' num2str(R)],'HorizontalAlignment','left','FontSize',12)
+text(0.05,0.5,['RMSE: ' num2str(RMSE)],'HorizontalAlignment','left','FontSize',12)
+text(0.05,0.45,['RMSE (glucose only): ' num2str(RMSEglc)],'HorizontalAlignment','left','FontSize',12)
 set(gca,'FontSize',12) % Creates an axes and sets its FontSize to 18
 print([root 'data/results/growthPrediction.pdf'],'-dpdf')
 
