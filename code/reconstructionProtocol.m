@@ -20,15 +20,20 @@ cd(code)
 modelRhto = importModel([data 'templateModels/rhto.xml'], true);
 modelRhto.id = 'rhto';
 
+% Correct duplicate metabolite name in rhto-GEM v1.3.0.
+metIdx=getIndexes(modelRhto,'N-[(R)-4-phosphonopantothenoyl]-L-cysteine','metnames')
+modelRhto.metNames(metIdx(1))={'tmp'};
+modelRhto=replaceMets(modelRhto,'tmp',modelRhto.metNames(metIdx(2)),true);
+
 % Create the 'scrap' folder, in which all files created during the reconstruction,
 % which are not the final model, will be stored.
 % Create the excel file of template for easy inspection during reconstruction steps.
 mkdir([root 'scrap'])
-exportToExcelFormat(modelRhto, [root 'scrap/rhto.xlsx']);
-
+%exportToExcelFormat(modelRhto, [root 'scrap/rhto.xlsx']);
+%exportModel(modelRhto, [root 'data/meneco/rhto.xml']);
 % Save MATLAB environment.
-save([root 'scrap/importModel.mat'])
-% load([root 'scrap/importModel.mat'])
+save([root 'scrap/rhtoModel.mat'],'modelRhto')
+% load([root 'scrap/rhtoModel.mat'],'modelRhto')
 
 %% GENERATE MODEL FROM HOMOLOGY 
 % PAPLA protein FASTA IDs were replaced by shorter IDs and are now following the 
@@ -42,61 +47,61 @@ blastRhto = getBlast('papla',[data '/genomes/Papla_protein.fasta'], ...
 %  
 % Save intermediate files in 'scrap' folder.
 save([root '/scrap/blastStruct.mat'],'blast*');
-% 
+%load([root '/scrap/blastStruct.mat'])
+ 
 % Use the blast results to generate the first draft model.
 model=getModelFromHomology(modelRhto,blastRhto,'papla',{},1,false,10^-20,150,35);
-model=deleteUnusedGenes(model);
-% 
-save([root '/scrap/model_r1.mat'],'model');
-%load([root 'scrap/model_r1.mat'])
-% 
+ 
+save([root '/scrap/homologyModel.mat'],'model');
+%load([root 'scrap/homologyModel.mat'])
+ 
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
     num2str(length(model.rxns)) ' / ' ...
     num2str(length(model.mets))])
 % 
 % To inspect the first draft model:
-exportToExcelFormat(model,[root '/scrap/r1_paplaGEM.xlsx']);
-clear blast mediumComps
+%exportToExcelFormat(model,[root '/scrap/r1_paplaGEM.xlsx']);
+clear blastRhto
 % 
 %% DEFINE BIOMASS COMPOSITION
 % Use the biomass pseudoreactions from rhto-GEM as template to modify.
-% 
+
 % Find all reactions with 'pseudreaction' in reactio name in rhto-GEM, and
 % add these to the draft model.
 biomassRxns = modelRhto.rxns(endsWith(modelRhto.rxnNames, 'pseudoreaction'));
 model = addRxnsGenesMets(model, modelRhto, biomassRxns);
-% 
+
 % Add exchange reactions for media components
 mediumComps = {'r_1654', 'r_1672', 'r_1808', 'r_1832', 'r_1861', ...
                'r_1992', 'r_2005', 'r_2060', 'r_2100', 'r_2111'};
 model = addRxnsGenesMets(model, modelRhto, mediumComps);
-% 
+
 % Add all exchange rxns
 % These were not gene annotated, and therefore not added in draft.
 % Might not require all exchange rxns, but easier to remove unconnected ones later.
 rxns    = getExchangeRxns(modelRhto);
 model   = addRxnsGenesMets(model,modelRhto,rxns,false,'Modelling reaction',1);
-% 
+
 % Add all non-gene annotated transport reactions
 noGeneIdx   = find(cellfun(@isempty,modelRhto.grRules)); % Which rxns have no genes
 rxnIdx      = find(getTransportRxns(modelRhto));
 rxnIdx      = intersect(rxnIdx,noGeneIdx); % Keep the ones without gene anotation
 rxns        = modelRhto.rxns(rxnIdx); % Obtain reaction IDs
 model       = addRxnsGenesMets(model,modelRhto,rxns,false,'Modeling reaction required for intercellular transport, gene unknown',1);
-% 
+
 % For the lipid curation and gapfilling 
 model = addRxnsGenesMets(model, modelRhto,{'r_4062', 'r_4064', 'r_4046'});
 model = setParam(model, 'ub', {'r_4062', 'r_4064', 'r_4046'}, 1000);
 model = setParam(model, 'lb', {'r_4062', 'r_4064', 'r_4046'}, 0);
-% 
+
 % Load biomass information
 fid           = fopen([data 'biomass/biomassCuration.csv']);
 loadedData    = textscan(fid, '%q %q %q %f','delimiter', ',', 'HeaderLines', 1);
 fclose(fid);
 BM.name       = loadedData{1};    BM.mets     = loadedData{2};
 BM.pseudorxn  = loadedData{3};    BM.coeff    = loadedData{4};
-% 
+
 % Nucleotides (DNA)
 % Find out which rows contain the relevant information
 indexes = find(contains(BM.pseudorxn, 'DNA'));
@@ -139,15 +144,15 @@ model = changeRxns(model, 'r_4065', equations, 1);
 save([root 'scrap/biomass.mat'],'model')
 % load([root 'scrap/biomass.mat'])
 
-clear indexes equations loadedData fid BM biomassRxns ans
+clear ans biomassRxns BM equations fid indexes loadedData mediumComps noGeneIdx rxnIdx rxns
 
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
     num2str(length(model.rxns)) ' / ' ...
     num2str(length(model.mets))])
 
-% Extport to inspect:
-exportToExcelFormat(model, [root 'scrap/r2_paplaGEM.xlsx']);
+% Export to inspect:
+%exportToExcelFormat(model, [root 'scrap/r2_paplaGEM.xlsx']);
 
 %% CURATION OF LIPID REACTIONS
 % P. laurentii has unique fatty acid and lipid class compositions. SLIMEr explicitly models each
@@ -218,9 +223,12 @@ template.bbMW       = loadedData{3};    template.comps  = loadedData{4};
 template.chains = {};
 for k = 1:numCols-3; template.chains(:,k) = loadedData{k+4}; end
 template.chains = regexprep(template.chains,':0(\d)', ':$1');
-%
+
 model = addSLIMEreactions(template, model, modelRhto);
 cd(code)
+% Remove unused genes and metabolites
+model = deleteUnusedGenes(model);
+model = removeMets(model,all(model.S == 0,2),false,true,true,true);
 
 save([root 'scrap/lipids.mat'],'model')
 % load([root 'scrap/lipids.mat'])
@@ -231,9 +239,9 @@ disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.mets))])
 
 % Export to inspect:
-exportToExcelFormat(model, [root 'scrap/r3_paplaGEM.xlsx']);
-exportModel(model,[root 'scrap/r3_paplaGEM.xml'])
-clear fid loadedData template k toRemove ans
+%exportToExcelFormat(model, [root 'scrap/r3_paplaGEM.xlsx']);
+exportModel(model,[root 'data/meneco/r3_paplaGEM.xml'])
+clear ans fid firstLine k loadedData numCols template toRemove
 
 %% PERFORM GAP-FILLING
 % MENECO
@@ -246,7 +254,7 @@ targets = find(any(model.S(:,rxnIdx)<0,2));
      '" name="',model.metNames(targets),'"/>');
 
 % Identified by MENECO (see meneco.txt for output file).
-% A minimum of 13 reactions are required, with different combinations of 19
+% A minimum of 34 reactions are required, with different combinations of 36
 % reactions. Not to favour one reaction over the other, as we don't
 % have any prove at the moment which one is more likely to be present, we
 % will add the union of reactions.
@@ -264,17 +272,13 @@ model   = setParam(model,'obj','r_2111',1);
 sol     = solveLP(model,1)
 printFluxes(model, sol.x)
 
-% Back lower bound of biomass production to zero.
-model = setParam(model, 'lb', 'r_2111', 0);
-model = deleteUnusedGenes(model);
-
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
     num2str(length(model.rxns)) ' / ' ...
     num2str(length(model.mets))])
 
 % Export to Excel format for easy inspection
-exportToExcelFormat(model,[root '/scrap/r4_paplaGEM.xlsx']);
+%exportToExcelFormat(model,[root '/scrap/r4_paplaGEM.xlsx']);
 
 % RAVEN fillGaps
 % Use biomass production as obj func for gapfilling
@@ -283,6 +287,8 @@ model = setParam(model, 'obj', 'r_2111', 1);
 % Set biomass production to arbitrary low flux, to force gap-filling to
 % produce biomass.
 model = setParam(model, 'lb', 'r_2111', 0.01);
+% Block 3',5'-AMP exchange, as it will otherwise be suggested by fillGaps
+model = setParam(model, 'ub', 'r_1641', 0);
 
 % From the Rhto model, remove all exchange reactions (the
 % necessary ones we already added, don't want to add new ones)
@@ -305,9 +311,9 @@ cd(code)
 sol = solveLP(model, 1)
 printFluxes(model, sol.x)
 
-% Back lower bound of biomass production to zero.
+% Reset lower bound of biomass production and allow 3',5'-AMP exchange
 model = setParam(model, 'lb', 'r_2111', 0);
-model = deleteUnusedGenes(model);
+model = setParam(model, 'ub', 'r_1641', 1000);
 
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
@@ -315,13 +321,12 @@ disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.mets))])
 
 % Export to Excel format for easy inspection
-exportToExcelFormat(model,[root '/scrap/r5_paplaGEM.xlsx']);
+%exportToExcelFormat(model,[root '/scrap/r5_paplaGEM.xlsx']);
 exportModel(model,[root 'scrap/r5_paplaGEM.xml'])
-clear addedRxns rxns sol biomassRxns
 
 save([root '/scrap/gapfilling.mat'],'model');
 % load([root 'scrap/gapfilling.mat'])
-clear addedRxns rxns sol biomassRxns
+clear addedRxns ans biomassRxns fid menecoRxns modelRhto2 rxnIdx sol targets targetSBML
 
 %% MANUAL CURATION
 % Include some missing essential reactions, e.g. xylulokinase, complex IV and reactions
@@ -346,12 +351,13 @@ modelSce.id = 'sce';
 model = addRxnsGenesMets(model,modelSce,rxns2,grRules2,'Identified from homology, manual curation',2);
 
 % Export to Excel format for easy inspection
-exportToExcelFormat(model,[root '/scrap/r6_paplaGEM.xlsx']);
+%exportToExcelFormat(model,[root '/scrap/r6_paplaGEM.xlsx']);
 
 % Modify gene associations of gap-filled reactions, annotationed
 % with R. toruloides genes.
 rhtoRxns = find(contains(model.grRules, 'RHTO'));
 model.rxnNames(rhtoRxns);
+model.rxns(rhtoRxns);
 model.grRules(rhtoRxns);
 
 fid         = fopen([data '/reconstruction/updateGrRules.txt']);
@@ -361,7 +367,7 @@ fclose(fid);
 rxns = loadedData{1};
 grRules = regexprep(loadedData{2},'***','');
 model = changeGrRules(model,rxns,grRules);
-%     
+
 % Remove any reactions containing 18:3 chain that might exist in the draft model.
 model = removeReactions(model,contains(model.rxnNames,'18:3'));
 
@@ -378,20 +384,19 @@ model = setParam(model,'rev',{'r_1634','r_1706','r_1710','r_1711','r_1714','r_17
 model = setParam(model,'lb',{'r_0659','r_0446'},0);
 model = setParam(model,'lb',contains(model.rxnNames,'fatty-acid--CoA ligase'),0);
 model = setParam(model,'ub','r_4046',1000);
-model = removeUnusedGenes(model);
+model = deleteUnusedGenes(model);
 % Save workspace
-save([root 'scrap/cleanup.mat'])
+save([root 'scrap/cleanup.mat'],'model')
 % load([root 'scrap/cleanup.mat'])
 
 %Export to inspect:
-exportToExcelFormat(model, [root '/scrap/r7_paplaGEM.xlsx']);
-exportModel(model,[root 'scrap/r7_paplaGEM.xml'])
+%exportToExcelFormat(model, [root '/scrap/r7_paplaGEM.xlsx']);
+%exportModel(model,[root 'scrap/r7_paplaGEM.xml'])
 
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
     num2str(length(model.rxns)) ' / ' ...
     num2str(length(model.mets))])
-%  
 
 %% Set NGAM and fit GAEC
 % Due to limited bioreactor data, unable to reliably fit NGAM. Instead, use the
@@ -419,7 +424,7 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1912'; ... % L-tryptophan
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
-model = setParam(model, 'lb', aminoacidRxns, -0.2);
+model = setParam(model, 'lb', aminoacidRxns, -0.1);
 
 % Fit GAEC based on bioreactor cultivation data gathered in this study
 cd([root 'code/curation'])
@@ -434,16 +439,20 @@ model.annotation.givenName    = 'Rafaela'; 'Mauricio';
 model.annotation.familyName   = 'Ventorim'; 'Ferreira';
 model.annotation.email        = 'rafaela.ventorim@ufv.br'; 'mauricio.moura@ufv.br';
 model.annotation.organization = 'Universidade Federal de Vicosa';
-model.annotation.note         = 'First draft model';
+model.annotation.note         = 'Genome-scale model of Papiliotrema laurentii UFV-1';
 model.id                      = 'paplaGEM';
 model.description             = 'Papiliotrema laurentii-GEM';
+model.sourceUrl               = 'https://github.com/SysBioChalmers/papla-GEM';
+
+% Remove unnecessary fields
+model = rmfield(model,{'metFrom','rxnFrom','geneFrom','geneShortNames'});
 
 % Save workspace
 save([root 'scrap/finalmodel.mat'],'model')
 % load([root 'scrap/finalmodel.mat'])
 
 %Export to inspect:
-exportToExcelFormat(model,[root '/scrap/paplaGEM.xlsx']);
+%exportToExcelFormat(model,[root '/scrap/paplaGEM.xlsx']);
 exportModel(model,[root 'scrap/paplaGEM.xml'])
 
 %% Store model
