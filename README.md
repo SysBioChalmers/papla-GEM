@@ -26,7 +26,7 @@ This repository contains the current consensus genome-scale metabolic model of _
 
 | Taxonomy | Latest change | Version | Reactions | Metabolites | Genes |
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-----:|
-| _Papiliotrema laurentii_ UFV-1 | 04-Apr-2021 | 1.0.0 | 2599 | 2065 | 1775 |
+| _Papiliotrema laurentii_ UFV-1 | 28-Aug-2021 | 1.0.0 | 2449 | 2117 | 772 |
 
 
 ## Installation & Usage
