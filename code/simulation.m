@@ -39,7 +39,7 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1912'; ... % L-tryptophan
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
-modelTmp = setParam(model, 'lb', aminoacidRxns, -0.2);
+modelTmp = setParam(model, 'lb', aminoacidRxns, -0.1);
 
 disp('Growth on glucose:')
 for i=1:4
@@ -55,8 +55,9 @@ fprintf('Growth rate measured: %.4f / simulated: %.4f\n',fluxData(5,1),-sol.f)
 %% Simulate different carbon sources
 % set the carbon source and unlimited O2 for aerobic growth
 cSource = {'glucose','acetate','galactose','sucrose','xylose',...
-    'glyerol','L-arabinose','D-arabinose','mannose',...
+    'glycerol','L-arabinose','D-arabinose','mannose',...
     '(R)-lactate','(S)-lactate'};
+cAtoms = [6,2,6,12,5,3,5,5,6,3,3];
 exchRxn = {'r_1714','r_1634','r_1710','r_2058','r_1718',...
     'r_1808','r_1878','r_1706','r_1715','r_1546','r_1551'};
 zeroFlx = repmat(0,1,numel(cSource));
@@ -65,14 +66,27 @@ model = setParam(model, 'ub', {'r_1992'}, 0);
 % set biomass pseudoreaction as objective
 model = setParam(model, 'obj',{'r_2111'}, 1);
 
+% Fluxes to track
+rxnId = getIndexes(model,{'r_1672','r_1992','r_2111'},'rxns');
+
 % Loop through all carbon sources and print exchange fluxes
 for i = 1:numel(cSource)
     fprintf('\nSimulate growth on %s:\n', cSource{i})
     modelTmp = setParam(model,'lb',exchRxn,zeroFlx);
-    modelTmp = setParam(modelTmp,'lb',exchRxn{i},-10);
+    modelTmp = setParam(modelTmp,'lb',exchRxn{i},-5);
     sol = solveLP(modelTmp);
-    printFluxes(modelTmp,sol.x)
+    cIdx = getIndexes(model,exchRxn{i},'rxns');
+    fluxList = [cIdx; rxnId];
+    table2(i,:) = abs(sol.x(fluxList)/(cAtoms(i)/6));
 end
+table2=[cSource', num2cell(table2)];
+
+fid = fopen([data 'results/carbonSources.tsv'],'w');
+fprintf(fid,'%s\t%s\t%s\t%s\t%s\n',["cSource" "cSource flux" "CO2 flux" "O2 flux" "growth"]);
+for j=1:length(cSource)
+    fprintf(fid,'%s\t%4.2f\t%4.2f\t%4.2f\t%4.2f\n',table2{j,:});
+end
+fclose(fid);
 
 %%  OLEAGINOUS FBA
 %  Add exchange reactions for triglyceride (16:0/18:1/18:1-TAG).
