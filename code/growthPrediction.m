@@ -74,5 +74,5 @@ ylabel('Predicted growth, h^-^1')
 legend(unique(source),'Location','eastoutside')%,'NumColumns',2)
 text(0.05,0.45,['Pearson r: ' num2str(R)],'HorizontalAlignment','left','FontSize',12)
 set(gca,'FontSize',12) % Creates an axes and sets its FontSize to 18
-print('validation.pdf','-dpdf')
+print([root 'data/results/growthPrediction.pdf'],'-dpdf')
 
