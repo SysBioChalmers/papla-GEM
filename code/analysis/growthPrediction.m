@@ -1,7 +1,7 @@
 clear; clc;
 if ~exist([pwd() '/growthPrediction.m']); error(['Make sure that '...
         'your Current Folder is the one containing the simulation file.']); end
-cd ../;  root = [pwd() '/'];
+cd ../../;  root = [pwd() '/'];
 data = [root 'data/'];
 code = [root 'code/'];
 cd(code)
