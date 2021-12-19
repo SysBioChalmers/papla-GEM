@@ -2,10 +2,11 @@
 clear; clc;
 if ~exist([pwd() '/simulation.m']); error(['Make sure that '...
         'your Current Folder is the one containing the simulation file.']); end
-cd ../;  root = [pwd() '/'];
+cd ../../;  root = [pwd() '/'];
 data = [root 'data/'];
 code = [root 'code/'];
 cd(code)
+%mkdir([root 'data/results'])
 % Load model
 model = importModel('../model/papla-GEM.xml');
 
@@ -18,7 +19,15 @@ cSourceData = fluxData{3};
 fluxData    = [fluxData{1} fluxData{2}];
 fclose(fid);
 
-% Yeast extract in medium, allow uptake of amino acids
+disp('Growth on glucose:')
+for i=5:6
+    modelTmp = setParam(model,'lb','r_1714',-fluxData(i,2));
+    sol = solveLP(modelTmp,1);
+    fprintf('Growth rate measured: %.4f / simulated: %.4f\n',fluxData(i,1),-sol.f)
+end
+for i=1:4
+    modelTmp = setParam(modelTmp,'lb','r_1714',-fluxData(i,2));
+    % Yeast extract in medium, allow uptake of amino acids
 aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1873'; ... % L-alanine
                  'r_1879'; ... % L-arginine
@@ -39,27 +48,23 @@ aminoacidRxns = {'r_1810'; ... % L-glycine
                  'r_1912'; ... % L-tryptophan
                  'r_1913'; ... % L-tyrosine
                  'r_1914'};    % L-valine              
-modelTmp = setParam(model, 'lb', aminoacidRxns, -0.1);
-
-disp('Growth on glucose:')
-for i=1:4
-    modelTmp = setParam(modelTmp,'lb','r_1714',-fluxData(i,2));
+    modelTmp = setParam(modelTmp, 'lb', aminoacidRxns, -0.1);
     sol = solveLP(modelTmp,1);
     fprintf('Growth rate measured: %.4f / simulated: %.4f\n',fluxData(i,1),-sol.f)
 end
 disp('Growth on xylose:')
-modelTmp = setParam(modelTmp,'lb',{'r_1714','r_1718'},[0,-fluxData(5,2)]);
+modelTmp = setParam(modelTmp,'lb',{'r_1714','r_1718'},[0,-fluxData(7,2)]);
 sol = solveLP(modelTmp,1);
-fprintf('Growth rate measured: %.4f / simulated: %.4f\n',fluxData(5,1),-sol.f)
+fprintf('Growth rate measured: %.4f / simulated: %.4f\n',fluxData(7,1),-sol.f)
 
 %% Simulate different carbon sources
 % set the carbon source and unlimited O2 for aerobic growth
 cSource = {'glucose','acetate','galactose','sucrose','xylose',...
-    'glycerol','L-arabinose','D-arabinose','mannose',...
+    'L-arabinose','D-arabinose','mannose',...
     '(R)-lactate','(S)-lactate'};
-cAtoms = [6,2,6,12,5,3,5,5,6,3,3];
+cAtoms = [6,2,6,12,5,5,5,6,3,3];
 exchRxn = {'r_1714','r_1634','r_1710','r_2058','r_1718',...
-    'r_1808','r_1878','r_1706','r_1715','r_1546','r_1551'};
+    'r_1878','r_1706','r_1715','r_1546','r_1551'};
 zeroFlx = repmat(0,1,numel(cSource));
 model = setParam(model, 'lb', {'r_1992'}, -1000);    % O2
 model = setParam(model, 'ub', {'r_1992'}, 0);
@@ -123,7 +128,6 @@ out = [num2cell(Glc.grRatio(idx)*100) num2cell(Xyl.grRatio(idx)*100) ...
     model.rxns(idx) model.rxnNames(idx) ...
     constructEquations(model,idx)];
 
-mkdir([root 'data/results'])
 fid = fopen([data 'results/oleaginous.tsv'],'w');
 fprintf(fid,'%s\t%s\t%s\t%s\t%s\n',["glucose" "xylose" "rxns" "rxnName" "eqn"]);
 for j=1:length(idx)
