@@ -48771,7 +48771,7 @@
           - s_1326: -1
       - lower_bound: 0
       - upper_bound: 1000
-      - gene_reaction_rule: "PAPLA_05807 and PAPLA_05162 PAPLA_03979 PAPLA_05834"
+      - gene_reaction_rule: "PAPLA_05807 and PAPLA_05162 and PAPLA_03979 and PAPLA_05834"
       - eccodes: "3.6.3.14"
       - subsystem:
           - "Oxidative phosphorylation"
