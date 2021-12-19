@@ -11,10 +11,9 @@ function [model,GAEC,err] = fitGAEC(model)
 
 %Load chemostat data:
 fid         = fopen('../../data/biomass/bioreactor_growth.csv');
-fluxData    = textscan(fid,'%f32 %f32 %s','Delimiter',',','HeaderLines',1);
-fluxData    = [fluxData{1} fluxData{2}];
+fluxData    = textscan(fid,'%f32 %f32 %s','Delimiter','\t','HeaderLines',1);
+fluxData    = [num2cell(fluxData{1}) num2cell(fluxData{2}) fluxData{3}];
 fclose(fid);
-fluxData(5,:) = [];
 
 %GAECs to span:
 disp('Estimating GAEC:')
@@ -40,7 +39,7 @@ fitting = ones(size(GAEC))*1000;
 for i = 1:length(GAEC)
     %Simulate model and calculate fitting:
     mod_data   = abs(simulateChemostat(model,fluxData,GAEC(i)));
-    R          = (mod_data - fluxData)./fluxData;
+    R          = (mod_data - cell2mat(fluxData(:,1:2)))./cell2mat(fluxData(:,1:2));
     fitting(i) = sqrt(sum(sum(R.^2)));
     disp(['GAEC = ' num2str(GAEC(i)) ' -> Error = ' num2str(fitting(i))])
 end
@@ -61,18 +60,31 @@ function mod_data = simulateChemostat(model,fluxData,GAEC)
 
 model = setGAEC(model,GAEC);
 
-pos = getIndexes(model',{'r_2111','r_1714'},'rxns');
+pos = getIndexes(model',{'r_2111','r_1714','r_1718'},'rxns');
 
 %Simulate chemostats:
-mod_data = zeros(size(fluxData));
-for i = 1:4
-    %Fix glucose and maximize biomass
-    model = setParam(model,'lb',pos(2),-fluxData(i,2));
-    model = setParam(model,'ub',pos(2),0);
-    model = setParam(model,'obj',pos(1),1);
+mod_data = zeros(7,2);
+for i = 5:6
+    %Fix carbon source and maximize biomass
+    switch fluxData{i,3}
+        case {'glucose','YNBglc'}
+            model = setParam(model,'lb',pos(2:3),[-fluxData{i,2}, 0]);
+        case 'xylose'
+            model = setParam(model,'lb',pos(2:3),[0, -fluxData{i,2}]);
+        otherwise
+            error('Carbon source unclear')
+    end
+    
+    model = setParam(model,'ub',pos(2:3),[0,0]);
+	model = setParam(model,'obj',pos(1),1);
     sol   = solveLP(model);
     %Store relevant variables:
-    mod_data(i,:) = sol.x(pos)';
+    switch fluxData{i,3}
+        case {'glucose','YNBglc'}
+            mod_data(i,:) = sol.x(pos(1:2))';
+        case 'xylose'
+            mod_data(i,:) = sol.x(pos([1,3]))';
+    end
 
 end
 end
