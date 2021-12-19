@@ -61,7 +61,9 @@ modelYli = removeReactions(modelYli,contains(modelYli.rxns,'y10'),true,true,true
 mkdir([root 'scrap'])
 %exportToExcelFormat(modelRhto, [root 'scrap/rhto.xlsx']);
 %exportToExcelFormat(modelYli, [root 'scrap/yli.xlsx']);
-%exportModel(modelRhto, [root 'data/meneco/rhto.xml']);
+% Prepare for gap-filling with meneco
+exportModel(modelRhto, [root 'data/meneco/rhto.xml']);
+
 % Save MATLAB environment.
 save([root '/scrap/modelTemplate.mat'], 'model*');
 % load([root 'scrap/modelTemplate.mat'],'model*')
@@ -115,7 +117,7 @@ model               = contractModel(modelComb);
 
 save([root '/scrap/homologyModel.mat'],'model');
 %load([root 'scrap/homologyModel.mat'])
- 
+
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
     num2str(length(model.rxns)) ' / ' ...
@@ -339,7 +341,6 @@ disp(['Number of genes / rxns / mets in model:  ' ...
 
 save([root 'scrap/meneco.mat'],'model')
 %load([root 'scrap/meneco.mat'])
-exportModel(model,[root 'data/meneco/r4_paplaGEM.xml'])
 
 % Export to Excel format for easy inspection
 %exportToExcelFormat(model,[root '/scrap/r4_paplaGEM.xlsx']);
@@ -374,7 +375,6 @@ disp(['Number of genes / rxns / mets in model:  ' ...
 
 save([root 'scrap/glucosefillgaps.mat'],'model')
 %load([root 'scrap/glucosefillgaps.mat'])
-exportModel(model,[root 'data/meneco/r4_glcfillgaps_paplaGEM.xml'])
 
 % Export to Excel format for easy inspection
 %exportToExcelFormat(model,[root '/scrap/r4_glcfillgaps_paplaGEM.xlsx']);
@@ -389,14 +389,8 @@ model = setParam(model, 'lb', {'r_1714','r_1718'},[0,-1]);
 % Verify that model can grow
 sol = solveLP(model, 1)
 
-% From the Rhto model, remove all exchange reactions (the
-% necessary ones we already added, don't want to add new ones)
-modelRhto3 = removeReactions(modelRhto, getExchangeRxns(modelRhto, 'both'), true, true, true);
-biomassRxns = modelRhto3.rxns(endsWith(modelRhto3.rxnNames, 'pseudoreaction'));
-modelRhto3 = removeReactions(modelRhto3, biomassRxns, true, true, true);
-
 % Run fillGaps function
-[~, ~, addedRxns, model] = fillGaps(model, modelRhto3, false, true);
+[~, ~, addedRxns, model] = fillGaps(model, modelRhto2, false, true);
 
 % Verify that model can now grow
 sol = solveLP(model, 1)
@@ -409,7 +403,6 @@ disp(['Number of genes / rxns / mets in model:  ' ...
 
 save([root 'scrap/xylosefillgaps.mat'],'model')
 %load([root 'scrap/xylosefillgaps.mat'])
-exportModel(model,[root 'data/meneco/r4_xylfillgaps_paplaGEM.xml'])
 
 % Export to Excel format for easy inspection
 %exportToExcelFormat(model,[root '/scrap/r4_xylfillgaps_paplaGEM.xlsx']);
@@ -506,7 +499,6 @@ save([root 'scrap/cleanup.mat'],'model')
 
 %Export to inspect:
 %exportToExcelFormat(model, [root '/scrap/r7_paplaGEM.xlsx']);
-%exportModel(model,[root 'scrap/r7_paplaGEM.xml'])
 
 disp(['Number of genes / rxns / mets in model:  ' ...
     num2str(length(model.genes)) ' / ' ...
@@ -547,8 +539,7 @@ save([root 'scrap/finalmodel.mat'],'model')
 % load([root 'scrap/finalmodel.mat'])
 
 %Export to inspect:
-exportToExcelFormat(model,[root '/scrap/paplaGEM.xlsx']);
-exportModel(model,[root 'scrap/paplaGEM.xml'])
+exportToExcelFormat(model,[root '/scrap/papla-GEM.xlsx']);
 
 %% Store model
 cd([root 'code'])
