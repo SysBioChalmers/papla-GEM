@@ -5,34 +5,12 @@ cd ../;  root = [pwd() '/'];
 data = [root 'data/'];
 code = [root 'code/'];
 cd(code)
+mkdir([root 'data/results'])
 % Load model
 model = importModel('../model/papla-GEM.xml');
 %% This script compares experimentally measured with model predicted growth rates
 model       = setParam(model,'eq',{'r_1718','r_1714'},0);
 model       = setParam(model,'obj','r_2111',1);
-
-% Cultivations were in complex medium containing amino acids
-aminoacidRxns = {'r_1810'; ... % L-glycine
-                 'r_1873'; ... % L-alanine
-                 'r_1879'; ... % L-arginine
-                 'r_1880'; ... % L-asparagine
-                 'r_1881'; ... % L-aspartate
-                 'r_1883'; ... % L-cysteine
-                 'r_1889'; ... % L-glutamate
-                 'r_1891'; ... % L-glutamine
-                 'r_1893'; ... % L-histidine
-                 'r_1897'; ... % L-isoleucine
-                 'r_1899'; ... % L-leucine
-                 'r_1900'; ... % L-lysine
-                 'r_1902'; ... % L-methionine
-                 'r_1903'; ... % L-phenylalanine
-                 'r_1904'; ... % L-proline
-                 'r_1905'; ... % L-serine
-                 'r_1911'; ... % L-threonine
-                 'r_1912'; ... % L-tryptophan
-                 'r_1913'; ... % L-tyrosine
-                 'r_1914'};    % L-valine              
-model = setParam(model, 'lb', aminoacidRxns, -0.1);
 
 % Load file
 fid         = fopen('../data/biomass/bioreactor_growth.csv');
@@ -44,10 +22,11 @@ fclose(fid);
 
 clear out
 for i = 1:length(growth)
-    if strcmp(source(i),'glucose')
-        modelTmp = setParam(model,'lb','r_1714',-rate(i));
-    elseif strcmp(source(i),'xylose')
-        modelTmp = setParam(model,'lb','r_1718',-rate(i));
+    switch source{i}
+        case {'YNBglc','glucose'}
+            modelTmp = setParam(model,'lb','r_1714',-rate(i));
+        case 'xylose'
+            modelTmp = setParam(model,'lb','r_1718',-rate(i));
     end
     sol=solveLP(modelTmp);
     out(i) = -sol.f;
@@ -64,7 +43,7 @@ RMSEglc = sqrt(mean((growth(1:end-1)-out(1:end-1)).^2));
 [~,~,ic] = unique(source);
 cols = [55,126,184; 228,26,28; 77,175,74; 152,78,163; 255,127,0; 255,255,51; 166,86,40; 247,129,191; 153,153,153];
 cols = cols/255;
-for i=1:2
+for i=1:3
     plot(growth(ic == i), out(ic == i), 'o', 'LineWidth', 4,...
         'Color', cols(i,:));
     hold on;
@@ -79,4 +58,3 @@ text(0.05,0.5,['RMSE: ' num2str(RMSE)],'HorizontalAlignment','left','FontSize',1
 text(0.05,0.45,['RMSE (glucose only): ' num2str(RMSEglc)],'HorizontalAlignment','left','FontSize',12)
 set(gca,'FontSize',12) % Creates an axes and sets its FontSize to 18
 print([root 'data/results/growthPrediction.pdf'],'-dpdf')
-
