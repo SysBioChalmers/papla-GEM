@@ -155,7 +155,7 @@ exUp = [modelRef.rxns(exUp(:,1)),modelRef.rxnNames(exUp(:,1)),num2cell(exUp)];
 %    but could be lower if two-fold did not allow growth.
 % 9: Maximum of row 5 and 7, to sort the most promising reactions.
 
-fid = fopen([data 'results/eMOMA_allowSterolExch.tsv'],'w');
+fid = fopen([data 'results/eMOMA_noSterolExch.tsv'],'w');
 fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n',["rxnID" "rxnName" "idx" ...
     "GR_KO" "EX_KO" "GR_OE" "EX_OE" "OEfactor" "EXmax"]);
 for j=1:length(exUp)
