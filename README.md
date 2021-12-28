@@ -22,6 +22,12 @@ This repository contains the current consensus genome-scale metabolic model of _
 **Strain:** UFV-1  
 **Condition:** minimal medium
 
+### Model Overview
+
+| Taxonomy | Latest change | Version | Reactions | Metabolites | Genes |
+| ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-----:|
+| _Papiliotrema laurentii_ UFV-1 | 28-Dec-2021 | 1.0.0-beta1 | 2465 | 2125 | 796 |
+
 ## Installation & Usage
 
 ### **User:**

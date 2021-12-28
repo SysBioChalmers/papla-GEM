@@ -2,7 +2,7 @@
 !!omap
 - metaData:
     id: "paplaGEM"
-    name: "Papiliotrema laurentii-GEM"
+    name: "papla-GEM_v1_0_0-beta1"
     date: "2021-12-28"
     defaultLB: "-1000"
     defaultUB: "1000"
