@@ -1,0 +1,49 @@
+rxnID	rxnName	idx	GR_KO	EX_KO	GR_OE	EX_OE	OEfactor	EXmax
+r_3526	H2O transport, cytoplasm-ER membrane	1491	0.9972	1.0598	0.5307	3.3746	2	3.3746
+r_1714	D-glucose exchange	976	0.0000	0.0000	2.0213	1.9954	2	1.9954
+r_2126	sedoheptulose bisphosphatase	1262	1.0000	1.1848	1.0000	1.1848	2	1.1848
+r_0353	dihydroxy-acid dehydratase (2,3-dihydroxy-3-methylpentanoate)	264	-0.0000	-0.0000	0.9868	1.1585	2	1.1585
+r_0669	ketol-acid reductoisomerase (2-aceto-2-hydroxybutanoate)	458	-0.0000	0.0000	0.9868	1.1585	2	1.1585
+r_0016	2-aceto-2-hydroxybutanoate synthase	10	-0.0000	0.0000	0.9868	1.1585	2	1.1585
+r_1980	O2 transport	1169	1.0000	1.1482	1.0000	1.1482	2	1.1482
+r_0256	catalase	193	1.0000	1.1478	1.0000	1.1478	2	1.1478
+r_0715	malate dehydrogenase, peroxisomal	487	1.0000	1.1471	1.0000	1.1471	2	1.1471
+r_1930	malate/oxaloacetate shuttle	1141	1.0000	1.1426	1.0000	1.1426	2	1.1426
+r_0958	pyruvate carboxylase	614	0.9801	1.1408	0.9985	1.1348	2	1.1408
+r_0452	fumarase, cytoplasmic	290	0.9610	1.1279	0.9993	1.0772	2	1.1279
+r_0206	arginase	154	1.0000	1.1156	1.0000	1.1156	2	1.1156
+r_1075	urea carboxylase	693	1.0000	1.1150	1.0000	1.1150	2	1.1150
+r_0191	allophanate hydrolase	144	1.0000	1.1150	1.0000	1.1150	2	1.1150
+r_0887	phosphofructokinase (s7p)	576	1.0000	1.1073	1.0000	1.1116	2	1.1116
+y200003	ATP-citrate lyase	2402	1.0000	1.1087	0.9969	1.0941	2	1.1087
+r_1096	(R)-mevalonate transport	714	1.0000	1.1069	1.0000	1.1069	2	1.1069
+r_1547	(R)-mevalonate exchange	857	1.0000	1.1069	1.0000	1.1069	2	1.1069
+r_0103	acetyl-CoA C-acetyltransferase	70	1.0000	1.1065	1.0000	1.1065	2	1.1065
+r_0559	hydroxymethylglutaryl CoA synthase	370	1.0000	1.1065	1.0000	1.1065	2	1.1065
+r_0250	carbamoyl-phosphate synthase (glutamine-hydrolysing)	188	-0.0000	0.0000	0.9981	1.1011	2	1.1011
+r_0208	argininosuccinate synthase	156	-0.0000	0.0000	0.9982	1.0988	2	1.0988
+r_0207	argininosuccinate lyase	155	-0.0000	0.0000	0.9982	1.0988	2	1.0988
+r_0816	ornithine carbamoyltransferase	556	-0.0000	0.0000	0.9982	1.0988	2	1.0988
+r_0548	homoserine kinase	361	-0.0000	0.0000	0.9953	1.0952	2	1.0952
+r_1041	threonine synthase	669	-0.0000	0.0000	0.9953	1.0952	2	1.0952
+r_2061	sulphite exchange	1221	1.0000	1.0828	1.0000	1.0828	2	1.0828
+r_1267	sulfite transport	842	1.0000	1.0828	1.0000	1.0828	2	1.0828
+r_1038	thioredoxin reductase (NADPH)	667	-0.0000	0.0000	0.9980	1.0824	2	1.0824
+r_1689	citrate/malate antiport	955	1.0000	1.0817	1.0000	1.0817	2	1.0817
+r_0301	citrate synthase, peroxisomal	233	1.0000	1.0817	1.0000	1.0817	2	1.0817
+r_0032	3',5'-bisphosphate nucleotidase	25	0.9800	1.0770	0.9981	1.0750	2	1.0770
+r_1266	sulfate uniport	841	-0.0000	0.0000	0.9978	1.0729	2	1.0729
+r_2060	sulphate exchange	1220	-0.0000	0.0000	0.9978	1.0729	2	1.0729
+r_0558	hydroxymethylglutaryl CoA reductase	369	-0.0000	0.0000	0.9931	1.0707	2	1.0707
+r_0154	adenylyl-sulfate kinase	113	-0.0000	0.0000	0.9981	1.0699	2	1.0699
+r_0883	phosphoadenylyl-sulfate reductase (thioredoxin)	572	-0.0000	0.0000	0.9981	1.0699	2	1.0699
+r_0219	aspartate-semialdehyde dehydrogenase	167	-0.0000	0.0000	0.9777	1.0690	2	1.0690
+r_0215	aspartate kinase	163	-0.0000	0.0000	0.9777	1.0690	2	1.0690
+r_1051	trehalose-phosphatase	677	-0.0000	0.0000	0.9986	1.0667	2	1.0667
+r_0216	aspartate transaminase	164	0.9858	1.0556	1.0000	1.0610	2	1.0610
+r_2100	water exchange	1247	0.9083	0.9040	1.0000	1.0607	2	1.0607
+r_0195	alpha,alpha-trehalose-phosphate synthase (UDP-forming)	148	-0.0000	0.0000	0.9986	1.0600	2	1.0600
+r_1596	3-methyl-2-oxopentanoate transport	889	0.9999	1.0570	0.9868	1.0590	2	1.0590
+r_2098	water diffusion	1245	1.0000	1.0583	1.0000	1.0583	2	1.0583
+r_1830	H+ diffusion	1050	1.0000	1.0506	1.0000	1.0506	2	1.0506
+r_0476	glutamine synthetase	307	-0.0000	0.0000	0.9990	1.0504	2	1.0504

@@ -2,7 +2,7 @@
 %following eMOMA evaluation as described by Kim et al. (2019)- doi:10.1186/s13068-019-1518-4
 
 clear; clc;
-if ~exist([pwd() '/growthPrediction.m']); error(['Make sure that '...
+if ~exist([pwd() '/overexpressionTargets.m']); error(['Make sure that '...
         'your Current Folder is the one containing the simulation file.']); end
 cd ../../;  root = [pwd() '/'];
 data = [root 'data/'];
@@ -10,7 +10,7 @@ code = [root 'code/'];
 cd(code)
 mkdir([root 'data/results'])
 % Load model
-model = importModel('../model/papla-GEM.xml');
+model = importModel([root '/model/papla-GEM.xml']);
 
 %% Add TAG exchange reaction
 idx = getIndexes(model, {'triglyceride (1-16:0, 2-18:1, 3-18:1)[erm]'}, 'metcomps');
@@ -27,15 +27,17 @@ model = setParam(model, 'eq', {'r_1552', 'r_1989', 'r_1815', 'r_1634'}, 0); % Ma
 
 % Block various other lipids, we know that TAGs accumulate
 model = setParam(model, 'eq', 'r_1727', 0); % Decanoate
-model = setParam(model, 'eq', 'r_2134', 0); % 13-demethyllanosterol
+model = setParam(model, 'eq', 'r_1994', 0); % Palmitoleate
+model = setParam(model, 'eq', 'r_2189', 0); % Oleate
+% Sterols
+model = setParam(model, 'eq', 'r_2134', 0); % 14-demethyllanosterol
 model = setParam(model, 'eq', 'r_1753', 0); % fecosterol
 model = setParam(model, 'eq', 'r_1757', 0); % ergosterol
 model = setParam(model, 'eq', 'r_1788', 0); % episterol
 model = setParam(model, 'eq', 'r_1915', 0); % Lanosterol
 model = setParam(model, 'eq', 'r_2106', 0); % Lanosterol
 model = setParam(model, 'eq', 'r_2137', 0); % ergosta-5,7,22,24(28)-tetraen-3beta-ol
-model = setParam(model, 'eq', 'r_1994', 0); % Palmitoleate
-model = setParam(model, 'eq', 'r_2189', 0); % Oleate
+
 sol   = solveLP(model,1) % Check that model still functions
 
 % Alternatively, block all exchange out fluxes and only allow CO2, water,
@@ -49,36 +51,43 @@ sol   = solveLP(model,1) % Check that model still functions
 %model = setParam(model,'ub',getExchangeRxns(model,'out'),0);
 %model = setParam(model,'ub',{'r_1672','r_2100','r_1832','r_2111','EXC_OUT_s_3036'},1000);
 
-%% Get reference flux distribution by FBA under non-limited growth conditions
+%% Get reference flux distribution by FBA under non-restricted growth conditions
 model       = setParam(model, 'obj',{'r_2111'}, 1); % Growth as objective
 model       = setParam(model, 'lb', {'r_1714'}, -5); % Glucose uptake
 modelRef    = model;
 solRef      = solveLP(modelRef,1);
 printFluxes(modelRef, solRef.x);
 
-%% Block nitrogen exchange to mimick nitrogen limiting conditions
+%% Block nitrogen exchange to mimick nitrogen restricted conditions
 modelLim    = setParam(model, 'eq', 'r_1654', 0);
 solLim      = solveLP(modelLim,1); % Confirm that no growth is possible
 solMOMA     = MOMA(modelRef,modelLim);
 printFluxes(modelRef,solMOMA.x)
 solMOMA.x(end)
 
+%% Run eMOMA loop
+% Reduce the number of reactions to be tested. Reaction should carry flux
+% in at least the FBA of reference condition, and/or the N-restricted MOMA,
+% otherwise KO or OE would not have an effect.
+nonZeroFlux = find(solMOMA.x ~= 0 | solRef.x ~= 0);
+
 % RefMuKO, LimProdKO, RefMuOE, LimProdOE
-out=zeros(numel(model.rxns),5);
+out=zeros(numel(nonZeroFlux),5);
 f=waitbar(0,'Running eMOMA...');
-for i=1:numel(modelRef.rxns)
-    waitbar(i/numel(modelRef.rxns),f,sprintf('Running eMOMA... %.1f%%',(i/numel(modelRef.rxns))*100))
+for i=1:numel(nonZeroFlux)
+    waitbar(i/numel(nonZeroFlux),f,sprintf('Running eMOMA... %.1f%%',(i/numel(nonZeroFlux))*100))
     % Knockout
-    modelRefKO  = setParam(modelRef,'eq',i,0);
-    solRefKO    = solveLP(modelRefKO,1);
+    j=nonZeroFlux(i); % Index of reaction in the model
+    modelRefKO  = setParam(modelRef,'eq',j,0);
     try
+        solRefKO    = solveLP(modelRefKO,1);
         out(i,1)    = -solRefKO.f; % Growth rate in reference conditions
     catch
         out(i,1)    = 0;
     end
     modelLimKO  = setParam(modelRefKO, 'eq', {'r_1654'}, 0);
-    solLimKO    = MOMA(modelRefKO, modelLimKO);
     try
+        solLimKO    = MOMA(modelRefKO, modelLimKO);
         out(i,2)    = solLimKO.x(end);
     catch
         out(i,2)    = 0;
@@ -89,9 +98,9 @@ for i=1:numel(modelRef.rxns)
     OEfactor = 2.1;
     while (noGrowth==true && OEfactor>1)
         OEfactor = OEfactor - 0.1; % To start at 2, in 10% steps
-        modelRefOE  = setParam(modelRef,'eq',i,OEfactor*solRef.x(i));
-        solRefOE    = solveLP(modelRefOE,1);
+        modelRefOE  = setParam(modelRef,'eq',j,OEfactor*solRef.x(j));
         try
+            solRefOE    = solveLP(modelRefOE,1);
             out(i,3)    = -solRefOE.f; % Growth rate in reference conditions
             noGrowth    = false;
             out(i,5)    = OEfactor;
@@ -101,8 +110,8 @@ for i=1:numel(modelRef.rxns)
         end
     end
     modelLimOE  = setParam(modelRefOE, 'eq', {'r_1654'}, 0);
-    solLimOE    = MOMA(modelRefOE, modelLimOE);
     try
+        solLimOE    = MOMA(modelRefOE, modelLimOE);
         out(i,4)    = solLimOE.x(end);
     catch
         out(i,4)    = 0;
@@ -125,9 +134,9 @@ filtRes(:,[2,4]) = filtRes(:,[2,4])/refEx; % Normalize TAG production to referen
 % those reactions where the above is true for either the knockout or the
 % overexpression (or both).
 prodImpr = 1.05; % Minimum 5% production increase during N-restriction
-growRed = 0.90 % Minimum 90% of non-mutated growth rate when N-uptake is allowed
+growRed = 0.90; % Minimum 90% of non-mutated growth rate when N-uptake is allowed
 exUp = find((filtRes(:,2)>prodImpr & filtRes(:,1)>growRed) | (filtRes(:,4)>prodImpr & filtRes(:,3)>growRed));
-exUp = [exUp, filtRes(exUp,:)];
+exUp = [nonZeroFlux(exUp), filtRes(exUp,:)];
 exUp(:,7) = max(exUp(:,[3,5]),[],2); % Add extra column: maximum production for each reaction
 [~,I]=sort(exUp(:,7),1,'descend'); % Sort by maximum production
 exUp = exUp(I,:); % Sort by maximum production
@@ -146,7 +155,7 @@ exUp = [modelRef.rxns(exUp(:,1)),modelRef.rxnNames(exUp(:,1)),num2cell(exUp)];
 %    but could be lower if two-fold did not allow growth.
 % 9: Maximum of row 5 and 7, to sort the most promising reactions.
 
-fid = fopen([data 'results/eMOMA_noSterolExch.txt'],'w');
+fid = fopen([data 'results/eMOMA_noSterolExch.tsv'],'w');
 fprintf(fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n',["rxnID" "rxnName" "idx" ...
     "GR_KO" "EX_KO" "GR_OE" "EX_OE" "OEfactor" "EXmax"]);
 for j=1:length(exUp)
