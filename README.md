@@ -60,4 +60,3 @@ Load the model in MATLAB using the default code specified [above](#user). Before
 ```matlab
 cd ./code
 newCommit(model);
-```
