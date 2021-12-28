@@ -13,7 +13,7 @@ This repository contains the current consensus genome-scale metabolic model of _
 **Utilisation:** experimental data reconstruction; _in silico_ strain design  
 **Field:** metabolic-network reconstruction  
 **Type of model:** reconstruction; curated  
-**Model source:** [rhto-GEM](https://github.com/SysBioChalmers/rhto-GEM)  
+**Model source:** [rhto-GEM](https://github.com/SysBioChalmers/rhto-GEM) and [iYali-GEM](https://github.com/SysBioChalmers/Yarrowia_lipolytica_W29-GEM) 
 **Omic source:** [genomics](https://doi.org/10.1016/j.fgb.2020.103456  )
 **Taxonomic name:** _Papiliotrema laurentii_  
 **Taxonomy ID:** [taxonomy:5418](https://identifiers.org/taxonomy:5418)  
@@ -26,7 +26,7 @@ This repository contains the current consensus genome-scale metabolic model of _
 
 | Taxonomy | Latest change | Version | Reactions | Metabolites | Genes |
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-----:|
-| _Papiliotrema laurentii_ UFV-1 | 28-Dec-2021 | 1.0.0-beta1 | 2465 | 2125 | 796 |
+| _Papiliotrema laurentii_ UFV-1 | 28-Dec-2021 | 1.1.0 | 2465 | 2125 | 796 |
 
 ## Installation & Usage
 
