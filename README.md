@@ -6,7 +6,7 @@ This repository contains the current consensus genome-scale metabolic model of _
 
 ## Citation
 
-* The manuscript has been submitted.
+> Ventorim RZ, de Moura Ferreira MA, de Almeida ELM, Kerkhoven EJ, da Silveira WB (2022) "Genome-scale model of oleaginous yeast _Papiliotrema laurentii_" _Biochem Eng J_. doi:[10.1016/j.bej.2022.108353](https://doi.org/10.1016/j.bej.2022.108353)
 
 ## Keywords:
 
@@ -14,7 +14,7 @@ This repository contains the current consensus genome-scale metabolic model of _
 **Field:** metabolic-network reconstruction  
 **Type of model:** reconstruction; curated  
 **Model source:** [rhto-GEM](https://github.com/SysBioChalmers/rhto-GEM)  
-**Omic source:** [genomics](https://doi.org/10.1016/j.fgb.2020.103456  )
+**Omic source:** [genomics](https://doi.org/10.1016/j.fgb.2020.103456)
 **Taxonomic name:** _Papiliotrema laurentii_  
 **Taxonomy ID:** [taxonomy:5418](https://identifiers.org/taxonomy:5418)  
 **Genome ID:** [insdc.sra:SRR10766837](https://identifiers.org/insdc.sra:SRR10766837)  
