@@ -2,17 +2,14 @@
 !!omap
 - metaData:
     id: "paplaGEM"
-    name: "Papiliotrema laurentii-GEM"
+    name: "papla-GEM_v1_1_0"
     date: "2021-12-28"
-    defaultLB: "-1000"
-    defaultUB: "1000"
     givenName: "Rafaela"
     familyName: "Ventorim"
     email: "rafaela.ventorim@ufv.br"
     organization: "Universidade Federal de Vicosa"
     taxonomy: "taxonomy/460523"
     note: "Genome-scale model of Papiliotrema laurentii UFV-1"
-    sourceUrl: "https://github.com/SysBioChalmers/papla-GEM"
 - metabolites:
     - !!omap
       - id: "m_0001"
