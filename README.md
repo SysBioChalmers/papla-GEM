@@ -1,5 +1,7 @@
 # papla-GEM: Genome-scale metabolic model of _Papiliotrema laurentii_
 
+[![Current release](https://img.shields.io/github/release/SysBioChalmers/papla-GEM/all.svg)](https://github.com/SysBioChalmers/papla-GEM/releases/)
+
 ## Description
 
 This repository contains the current consensus genome-scale metabolic model of _Papiliotrema laurentii_ UFV-1, named **papla-GEM**. The model distributed on this GitHub repository is continuously updated, with the latest releases available [here](https://github.com/SysBioChalmers/papla-GEM/releases). To get access to the model associated to the Ventorim _et al_. (2022) publication, use [papla-GEM 1.1.0](https://github.com/SysBioChalmers/papla-GEM/releases/tag/1.1.0).
@@ -60,9 +62,9 @@ writeCbModel(model, 'papla-GEM.xml')
 
 Development of the model is done via RAVEN, to ensure that model content is retained as much as possible (I/O through other software might result in undesired loss of annotation).
 
-[Fork](https://github.com/sysbiochalmers/papla-GEM/fork) the papla-GEM repository to your own GitHub account, and create a new branch from `devel`.
+[Fork](https://github.com/sysbiochalmers/papla-GEM/fork) the papla-GEM repository to your own GitHub account, and create a new branch from `develop`.
 
-Load the model in MATLAB using the default code specified [above](#user). Before making a pull-request to the `devel` branch, export the model with the `newCommit` function provided in the repository:
+Load the model in MATLAB using the default code specified [above](#user). Before making a pull-request to the `develop` branch, export the model with the `newCommit` function provided in the repository:
 ```matlab
 cd ./code
 newCommit(model);
